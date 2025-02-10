@@ -1,3 +1,4 @@
+
 import streamlit as st
 import pandas as pd
 import requests
@@ -14,7 +15,37 @@ import plotly.graph_objects as go
 st.set_page_config(page_title="Real Estate Scraper & Dashboard", page_icon="🏠", layout="wide")
 
 
-
+# Style CSS personnalisé
+st.markdown("""
+    <style>
+    .stButton button {
+        background-color: #4CAF50;
+        color: white;
+        border-radius: 5px;
+        padding: 10px 24px;
+        font-size: 16px;
+    }
+    .stButton button:hover {
+        background-color: #45a049;
+    }
+    .stHeader {
+        color: #2E86C1;
+    }
+    /* Style des métriques (KPI) */
+    div[data-testid="stMetric"] {
+        background-color: #2E86C1 !important;
+        color: white !important;
+        border-radius: 10px !important;
+        padding: 15px !important;
+        box-shadow: 2px 2px 5px #BFC9CA !important;
+        text-align: center !important;
+    }
+    .stDataFrame {
+        border-radius: 10px;
+        box-shadow: 2px 2px 5px #BFC9CA;
+    }
+    </style>
+    """, unsafe_allow_html=True)
 
 
 # Titre de l'application
