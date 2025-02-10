@@ -9,3 +9,5 @@ openpyxl
 urllib3
 selenium
 webdriver-manager
+google-chrome-stable
+chromium-chromedriver
