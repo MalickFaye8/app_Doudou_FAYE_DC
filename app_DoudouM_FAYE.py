@@ -149,9 +149,11 @@ def nettoyer_donnees(df):
     df_cleaned['superficie'] = df_cleaned['superficie'].apply(extraire_montant)
 
     columns_to_keep = [
-        'nombre_salle_bain','detail', 'nombre_chambre', 'superficie',
-        'adresse', 'image_lien-src','type_Propriete', 'Categorie_Propriete',
-        'Montant-Prix', 'Devise-Prix'
+        'type_Propriete', 'Categorie_Propriete','detail',
+        'Montant-Prix', 'Devise-Prix','nombre_chambre', 
+        'nombre_salle_bain','superficie',
+        'adresse', 'image_lien-src',
+        
     ]
     df_cleaned = df_cleaned[columns_to_keep]
     return df_cleaned
