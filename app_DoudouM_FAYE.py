@@ -1,4 +1,3 @@
-
 import streamlit as st
 import pandas as pd
 import requests
@@ -68,7 +67,7 @@ def scrape_data(urls, categories, num_pages):
         for page_num in range(1, num_pages + 1):
             page_url = f"{url}?page={page_num}" if page_num > 1 else url
             try:
-                response = requests.get(page_url, headers=headers)
+                response = requests.get(page_url)
             
                 #response = requests.get(page_url, verify=False)
                 #soup = BeautifulSoup(response.text, "lxml")
