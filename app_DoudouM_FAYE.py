@@ -248,7 +248,8 @@ if option == "Scraper des données":
         with st.spinner("Scraping en cours..."):
             df = scrape_data(urls, categories, num_pages)
             if df.empty:
-                print("⚠️ Le dataframe est vide ! Vérifiez le scraping.")
+                st.warning("⚠️ Le dataframe est vide ! Vérifiez le scraping.")
+                #print("⚠️ Le dataframe est vide ! Vérifiez le scraping.")
             else:
                 df['Montant-Prix'] = df['Prix'].apply(extraire_montant)
                 df['Devise-Prix'] = df['Prix'].apply(extraire_devise)
