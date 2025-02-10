@@ -405,10 +405,17 @@ elif option == "Évaluer l'application":
     st.markdown("""
         Nous apprécions vos commentaires pour améliorer cette application.
     """)
-    with st.form("evaluation_form"):
-        nom = st.text_input("Nom")
-        email = st.text_input("Email")
-        note = st.slider("Note (1-10)", 1, 10)
-        commentaire = st.text_area("Commentaire")
-        if st.form_submit_button("Soumettre"):
-            st.success("Merci pour votre évaluation !")
+
+    # URL du formulaire KoboToolbox (remplace avec le tien)
+    kobo_form_url = "https://ee.kobotoolbox.org/x/r8zOUhbx"
+
+    # Intégrer le formulaire dans un iframe
+    st.components.v1.iframe(kobo_form_url, height=600, scrolling=True)
+
+    # with st.form("evaluation_form"):
+    #     nom = st.text_input("Nom")
+    #     email = st.text_input("Email")
+    #     note = st.slider("Note (1-10)", 1, 10)
+    #     commentaire = st.text_area("Commentaire")
+    #     if st.form_submit_button("Soumettre"):
+    #         st.success("Merci pour votre évaluation !")
