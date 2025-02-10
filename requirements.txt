@@ -1,8 +1,7 @@
 streamlit
 pandas
 requests
+beautifulsoup4
 bs4
 datetime
-io
-plotly.express
-plotly.graph_objects
+plotly
