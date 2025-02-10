@@ -10,6 +10,20 @@ import plotly.express as px
 import plotly.graph_objects as go
 
 
+from selenium import webdriver
+from selenium.webdriver.chrome.service import Service
+from selenium.webdriver.chrome.options import Options
+from selenium.webdriver.common.by import By
+from selenium.webdriver.common.keys import Keys
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
+import time
+
+from selenium import webdriver
+from selenium.webdriver.chrome.options import Options
+from webdriver_manager.chrome import ChromeDriverManager
+
+
 # Configuration de la page
 st.set_page_config(page_title="Real Estate Scraper & Dashboard", page_icon="🏠", layout="wide")
 
@@ -62,47 +76,68 @@ st.write(f"Option sélectionnée : {option}")  # Pour vérifier si l'option chan
 
 # Fonction pour scraper les données
 def scrape_data(urls, categories, num_pages):
+    options = Options()
+    options.add_argument("--headless")  # Exécute le navigateur en mode sans tête
+    options.add_argument("--disable-gpu")
+    options.add_argument("--no-sandbox")
+    options.add_argument("--disable-dev-shm-usage")
+
+    service = Service(ChromeDriverManager().install())
+    driver = webdriver.Chrome(service=service, options=options)
+    
     data = []
-    for url, category in zip(urls, categories):
-        for page_num in range(1, num_pages + 1):
-            page_url = f"{url}?page={page_num}" if page_num > 1 else url
-            try:
-                urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
-                headers = {
-                    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36"
-                }
-                response = requests.get(page_url, verify=False, headers=headers)
-
-                print("Statut HTTP :", response.status_code)
-                print(response.text[:500])  # Voir les 500 premiers caractères de la page
-            
-                #response = requests.get(page_url, verify=False)
-                #soup = BeautifulSoup(response.text, "lxml")
-                soup = BeautifulSoup(response.text, "html.parser")
-                listings = soup.find_all("div", class_="listings-cards__list-item")
-
+    
+    try:
+        for url, category in zip(urls, categories):
+            for page_num in range(1, num_pages + 1):
+                page_url = f"{url}?page={page_num}" if page_num > 1 else url
+                driver.get(page_url)
+                time.sleep(3)  # Attendre le chargement de la page
+                
+                try:
+                    listings = WebDriverWait(driver, 10).until(
+                        EC.presence_of_all_elements_located((By.CLASS_NAME, "listings-cards__list-item"))
+                    )
+                except Exception as e:
+                    print(f"Aucune donnée trouvée sur {page_url} : {e}")
+                    continue
+                
                 for listing in listings:
-                    details = listing.find("div", class_="listing-card__header__title")
-                    details = details.text.strip() if details else "Non disponible"
-
-                    nb_chambres = listing.find('span', class_='listing-card__header__tags__item--no-of-bedrooms')
-                    nb_chambres = nb_chambres.text.strip() if nb_chambres else "Non disponible"
-
-                    superficie = listing.find('span', class_='listing-card__header__tags__item--square-metres')
-                    superficie = superficie.text.strip() if superficie else "Non disponible"
-
-                    adresse = listing.find("div", class_="listing-card__header__location")
-                    adresse = adresse.text.strip() if adresse else "Non disponible"
-
-                    prix = listing.find("span", class_="listing-card__price__value")
-                    prix = prix.text.strip() if prix else "Non disponible"
-
-                    image = listing.find('img', class_='listing-card__image__resource')
-                    image_lien = image['src'] if image else "Non disponible"
-
-                    date_effet = listing.find("div", class_="listing-card__date-line")
-                    date_effet = date_effet.text.strip() if date_effet else "Non disponible"
-
+                    try:
+                        details = listing.find_element(By.CLASS_NAME, "listing-card__header__title").text.strip()
+                    except:
+                        details = "Non disponible"
+                    
+                    try:
+                        nb_chambres = listing.find_element(By.CLASS_NAME, "listing-card__header__tags__item--no-of-bedrooms").text.strip()
+                    except:
+                        nb_chambres = "Non disponible"
+                    
+                    try:
+                        superficie = listing.find_element(By.CLASS_NAME, "listing-card__header__tags__item--square-metres").text.strip()
+                    except:
+                        superficie = "Non disponible"
+                    
+                    try:
+                        adresse = listing.find_element(By.CLASS_NAME, "listing-card__header__location").text.strip()
+                    except:
+                        adresse = "Non disponible"
+                    
+                    try:
+                        prix = listing.find_element(By.CLASS_NAME, "listing-card__price__value").text.strip()
+                    except:
+                        prix = "Non disponible"
+                    
+                    try:
+                        image = listing.find_element(By.CLASS_NAME, "listing-card__image__resource").get_attribute("src")
+                    except:
+                        image = "Non disponible"
+                    
+                    try:
+                        date_effet = listing.find_element(By.CLASS_NAME, "listing-card__date-line").text.strip()
+                    except:
+                        date_effet = "Non disponible"
+                    
                     row = {
                         "Catégorie": category,
                         "Détails": details,
@@ -110,22 +145,23 @@ def scrape_data(urls, categories, num_pages):
                         "Superficie": superficie,
                         "Adresse": adresse,
                         "Prix": prix,
-                        "Image": image_lien,
+                        "Image": image,
                         "Date d'effet": date_effet,
                         "Date d'extraction": date.today().strftime("%Y-%m-%d")
                     }
                     data.append(row)
-            except Exception as e:
-                st.error(f"Erreur lors du scraping de {url} page {page_num} : {e}")
-
+    
+    finally:
+        driver.quit()
+    
     df = pd.DataFrame(data)
-
-    # Vérifier que les colonnes existent avant d'appliquer le nettoyage
+    
+    # Nettoyage des données
     colonnes_a_nettoyer = ["Détails", "Nombre de chambres", "Superficie", "Adresse", "Prix", "Date d'effet"]
     for col in colonnes_a_nettoyer:
         if col in df.columns:
             df[col] = df[col].apply(lambda x: re.sub(r'[^a-zA-Z0-9\s]', '', x) if isinstance(x, str) else x)
-
+    
     return df
 
 def nettoyer_donnees(df):
