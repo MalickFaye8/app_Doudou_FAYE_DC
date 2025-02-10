@@ -82,39 +82,16 @@ def scrape_data(urls, categories, num_pages):
             page_url = f"{url}?page={page_num}" if page_num > 1 else url
             try:
                 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
-                # headers = {
-                #     "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36"
-                # }
 
-                # headers = {
-                #     "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
-                # }
                 headers = {
-                    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36",
-                    "Accept-Language": "en-US,en;q=0.9",
-                    "Accept-Encoding": "gzip, deflate, br",
-                    "Referer": "https://www.google.com/",
-                    "DNT": "1",
-                    "Connection": "keep-alive"
+                    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
                 }
+
                 response = requests.get(page_url, headers=headers,verify=False)
 
-                # session = requests.Session()
-                # session.headers.update({
-                #     "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
-                # })
-                # response = session.get(url, verify=False)
-
-
-
-                st.write(f"🟢 Code HTTP: {response.status_code}")  # Affiche le code HTTP dans l'application
-                st.text(response.text[:1000])  # Affiche les 1000 premiers caractères du HTML pour vérifier le contenu
-
-        
-                #response = requests.get(page_url,verify=False, headers=headers) # Au déploiement on enleve la vérification cad verify=False
-
-                #response = requests.get(page_url, verify=False)
-                #soup = BeautifulSoup(response.text, "lxml")
+                # st.write(f"🟢 Code HTTP: {response.status_code}")  # Affiche le code HTTP dans l'application
+                # st.text(response.text[:1000])  # Affiche les 1000 premiers caractères du HTML pour vérifier le contenu
+                
                 soup = BeautifulSoup(response.text, "html.parser")
                 listings = soup.find_all("div", class_="listings-cards__list-item")
 
@@ -292,54 +269,26 @@ if option == "Scraper des données":
     
 
 
-    # # Bouton pour lancer le scraping
-    # if st.button("🚀 Lancer le scraping"):
-    #     with st.spinner("Scraping en cours..."):
-    #         df = scrape_data(urls, categories, num_pages)
-    #         if df.empty:
-    #             st.warning("⚠️ Le dataframe est vide ! Vérifiez le scraping.")
-    #             #print("⚠️ Le dataframe est vide ! Vérifiez le scraping.")
-    #         else:
-    #             df['Montant-Prix'] = df['Prix'].apply(extraire_montant)
-    #             df['Devise-Prix'] = df['Prix'].apply(extraire_devise)
-    #             st.success("Scraping terminé !")
-    #             st.write(df)
-    #             # Télécharger les données au format CSV
-    #             st.download_button(
-    #                 label="📥 Télécharger les données scrapées",
-    #                 data=df.to_csv(index=False).encode('utf-8'),
-    #                 file_name="donnees_scrapees.csv",
-    #                 mime="text/csv"
-    #             )
-                
     # Bouton pour lancer le scraping
     if st.button("🚀 Lancer le scraping"):
         with st.spinner("Scraping en cours..."):
-            try:
-                df = scrape_data(urls, categories, num_pages)
-                if df.empty:
-                    st.warning("⚠️ Le dataframe est vide ! Vérifiez le scraping.")
-                    st.error("🔍 Vérifiez que les URLs sont correctes et que le site n'a pas changé son HTML.")
-                    st.write("📌 **Debugging Infos :**")
-                    st.write(f"Nombre d'URLs : {len(urls)}")
-                    st.write(f"Catégories : {categories}")
-                    st.write(f"Nombre de pages : {num_pages}")
-                    
-                else:
-                    df['Montant-Prix'] = df['Prix'].apply(extraire_montant)
-                    df['Devise-Prix'] = df['Prix'].apply(extraire_devise)
-                    st.success("✅ Scraping terminé !")
-                    st.write(df)
-    
-                    # Télécharger les données au format CSV
-                    st.download_button(
-                        label="📥 Télécharger les données scrapées",
-                        data=df.to_csv(index=False).encode('utf-8'),
-                        file_name="donnees_scrapees.csv",
-                        mime="text/csv"
-                    )
-            except Exception as e:
-                st.error(f"🚨 Une erreur est survenue lors du scraping : {e}")
+            df = scrape_data(urls, categories, num_pages)
+            if df.empty:
+                st.warning("⚠️ Le dataframe est vide ! Vérifiez le scraping.")
+                #print("⚠️ Le dataframe est vide ! Vérifiez le scraping.")
+            else:
+                df['Montant-Prix'] = df['Prix'].apply(extraire_montant)
+                df['Devise-Prix'] = df['Prix'].apply(extraire_devise)
+                st.success("Scraping terminé !")
+                st.write(df)
+                # Télécharger les données au format CSV
+                st.download_button(
+                    label="📥 Télécharger les données scrapées",
+                    data=df.to_csv(index=False).encode('utf-8'),
+                    file_name="donnees_scrapees.csv",
+                    mime="text/csv"
+                )
+                
 
 
 # Télécharger des données
