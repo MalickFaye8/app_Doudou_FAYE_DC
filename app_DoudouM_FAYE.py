@@ -299,7 +299,9 @@ elif option == "Dashboard":
     #uploaded_file = st.file_uploader("Choisir un fichier Excel", type=["xlsx"])
 
     if 'df_cleaned' not in st.session_state:
-        st.warning("Veuillez d'abord charger et nettoyer les données dans la section 'Télécharger des données'.")
+        st.warning("Vous pouvez également charger et nettoyer des données scrapées à travers Web Scraper dans la section 'Télécharger des données'.")
+        df = pd.read_excel('data_test/scraper_immobilier.xlsx')
+        df_cleaned = nettoyer_donnees(df)
     else:
         df_cleaned = st.session_state['df_cleaned']
 
