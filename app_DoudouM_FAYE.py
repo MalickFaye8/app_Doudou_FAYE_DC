@@ -88,6 +88,11 @@ def scrape_data(urls, categories, num_pages):
 
                 headers = {"User-Agent": "Mozilla/5.0"}
                 response = requests.get(page_url, headers=headers)
+
+
+                st.write(f"🟢 Code HTTP: {response.status_code}")  # Affiche le code HTTP dans l'application
+                st.text(response.text[:1000])  # Affiche les 1000 premiers caractères du HTML pour vérifier le contenu
+
         
                 #response = requests.get(page_url,verify=False, headers=headers) # Au déploiement on enleve la vérification cad verify=False
 
