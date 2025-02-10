@@ -72,6 +72,9 @@ def scrape_data(urls, categories, num_pages):
                     "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36"
                 }
                 response = requests.get(page_url, verify=False, headers=headers)
+
+                print("Statut HTTP :", response.status_code)
+                print(response.text[:500])  # Voir les 500 premiers caractères de la page
             
                 #response = requests.get(page_url, verify=False)
                 #soup = BeautifulSoup(response.text, "lxml")
