@@ -270,7 +270,26 @@ if option == "Scraper des données":
     
 
 
-
+    # # Bouton pour lancer le scraping
+    # if st.button("🚀 Lancer le scraping"):
+    #     with st.spinner("Scraping en cours..."):
+    #         df = scrape_data(urls, categories, num_pages)
+    #         if df.empty:
+    #             st.warning("⚠️ Le dataframe est vide ! Vérifiez le scraping.")
+    #             #print("⚠️ Le dataframe est vide ! Vérifiez le scraping.")
+    #         else:
+    #             df['Montant-Prix'] = df['Prix'].apply(extraire_montant)
+    #             df['Devise-Prix'] = df['Prix'].apply(extraire_devise)
+    #             st.success("Scraping terminé !")
+    #             st.write(df)
+    #             # Télécharger les données au format CSV
+    #             st.download_button(
+    #                 label="📥 Télécharger les données scrapées",
+    #                 data=df.to_csv(index=False).encode('utf-8'),
+    #                 file_name="donnees_scrapees.csv",
+    #                 mime="text/csv"
+    #             )
+                
     # Bouton pour lancer le scraping
     if st.button("🚀 Lancer le scraping"):
         with st.spinner("Scraping en cours..."):
