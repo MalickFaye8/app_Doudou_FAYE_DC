@@ -268,25 +268,38 @@ if option == "Scraper des données":
     # Nombre de pages à scraper
     num_pages = st.number_input("Nombre de pages à scraper", min_value=1, max_value=100, value=10)
     
+
+
+
     # Bouton pour lancer le scraping
     if st.button("🚀 Lancer le scraping"):
         with st.spinner("Scraping en cours..."):
-            df = scrape_data(urls, categories, num_pages)
-            if df.empty:
-                st.warning("⚠️ Le dataframe est vide ! Vérifiez le scraping.")
-                #print("⚠️ Le dataframe est vide ! Vérifiez le scraping.")
-            else:
-                df['Montant-Prix'] = df['Prix'].apply(extraire_montant)
-                df['Devise-Prix'] = df['Prix'].apply(extraire_devise)
-                st.success("Scraping terminé !")
-                st.write(df)
-                # Télécharger les données au format CSV
-                st.download_button(
-                    label="📥 Télécharger les données scrapées",
-                    data=df.to_csv(index=False).encode('utf-8'),
-                    file_name="donnees_scrapees.csv",
-                    mime="text/csv"
-                )
+            try:
+                df = scrape_data(urls, categories, num_pages)
+                if df.empty:
+                    st.warning("⚠️ Le dataframe est vide ! Vérifiez le scraping.")
+                    st.error("🔍 Vérifiez que les URLs sont correctes et que le site n'a pas changé son HTML.")
+                    st.write("📌 **Debugging Infos :**")
+                    st.write(f"Nombre d'URLs : {len(urls)}")
+                    st.write(f"Catégories : {categories}")
+                    st.write(f"Nombre de pages : {num_pages}")
+                    
+                else:
+                    df['Montant-Prix'] = df['Prix'].apply(extraire_montant)
+                    df['Devise-Prix'] = df['Prix'].apply(extraire_devise)
+                    st.success("✅ Scraping terminé !")
+                    st.write(df)
+    
+                    # Télécharger les données au format CSV
+                    st.download_button(
+                        label="📥 Télécharger les données scrapées",
+                        data=df.to_csv(index=False).encode('utf-8'),
+                        file_name="donnees_scrapees.csv",
+                        mime="text/csv"
+                    )
+            except Exception as e:
+                st.error(f"🚨 Une erreur est survenue lors du scraping : {e}")
+
 
 # Télécharger des données
 elif option == "Télécharger des données":
