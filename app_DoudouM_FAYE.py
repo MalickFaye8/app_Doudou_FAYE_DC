@@ -81,11 +81,15 @@ def scrape_data(urls, categories, num_pages):
         for page_num in range(1, num_pages + 1):
             page_url = f"{url}?page={page_num}" if page_num > 1 else url
             try:
-                urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
-                headers = {
-                    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36"
-                }
-                response = requests.get(page_url,verify=False, headers=headers) # Au déploiement on enleve la vérification cad verify=False
+                # urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
+                # headers = {
+                #     "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36"
+                # }
+
+                headers = {"User-Agent": "Mozilla/5.0"}
+                response = requests.get(url, headers=headers)
+        
+                #response = requests.get(page_url,verify=False, headers=headers) # Au déploiement on enleve la vérification cad verify=False
 
                 #response = requests.get(page_url, verify=False)
                 #soup = BeautifulSoup(response.text, "lxml")
