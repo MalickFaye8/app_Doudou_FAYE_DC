@@ -87,7 +87,7 @@ def scrape_data(urls, categories, num_pages):
                 # }
 
                 headers = {"User-Agent": "Mozilla/5.0"}
-                response = requests.get(url, headers=headers)
+                response = requests.get(page_url, headers=headers)
         
                 #response = requests.get(page_url,verify=False, headers=headers) # Au déploiement on enleve la vérification cad verify=False
 
